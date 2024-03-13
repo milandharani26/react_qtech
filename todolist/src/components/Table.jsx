@@ -1,14 +1,10 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
-// import { ThemeProvider } from "@emotion/react";
-// import { theme } from "./Theme";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-// import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-// import Paper from "@mui/material/Paper";
 import Select from "./Select";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
@@ -51,7 +47,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedTables({ rows, obj, onUpdate }) {
+export default function CustomizedTables({ rows, obj, onUpdate, onDelete }) {
+
+
+
   return (
     <>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -65,7 +64,7 @@ export default function CustomizedTables({ rows, obj, onUpdate }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, i) => (
+          {rows.slice(1).map((row, i) => (
             <StyledTableRow key={i}>
               <StyledTableCell component="th" scope="row">
                 {row.title}
@@ -73,26 +72,33 @@ export default function CustomizedTables({ rows, obj, onUpdate }) {
 
               <StyledTableCell align="right">{row.description}</StyledTableCell>
 
-              <StyledTableCell align="right">
-                <Select obj={obj} />
+              <StyledTableCell align="right" style={{ position: "relative" }}>
+
+                <div className={`status ${row.status === "completed" ? "green" : (row.status === "pending" ? "red" : "gray")}`}></div>
+                {row.status}
+
               </StyledTableCell>
 
               <StyledTableCell align="right">
                 <Stack direction="row-reverse" spacing={2}>
 
-                  <BasicModal onclick={onUpdate} obj={obj}><EditIcon /></BasicModal>
+                  {/* <BasicModal onclick={() => handleUpdate(row.id)}  onUpdate={onUpdate} obj={obj} row={row}><EditIcon /></BasicModal> */}
+                  <BasicModal onclick={onUpdate} obj={obj} row={row}><EditIcon /></BasicModal>
 
                   {/* <Button variant="contained">
                     <EditIcon />
                   </Button> */}
-                  <Button variant="contained">
+                  <Button variant="contained" onClick={() => onDelete(row.id)}>
                     <DeleteIcon />
                   </Button>
                 </Stack>
               </StyledTableCell>
 
               <StyledTableCell align="right">
-                <Select obj={people} />
+                <Select obj={people} setCondition={onUpdate} row={row}/>
+                {/* <Select obj={people} /> */}
+
+                {/* {row.assinTo} */}
               </StyledTableCell>
             </StyledTableRow>
           ))}
@@ -101,3 +107,4 @@ export default function CustomizedTables({ rows, obj, onUpdate }) {
     </>
   );
 }
+

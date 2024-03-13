@@ -40,9 +40,31 @@ const people = [
   },
 ];
 
+const generatedIds = new Set();
+
+function generateUniqueTicketId() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+  let ticketId = "";
+
+  do {
+    ticketId = "";
+    for (let i = 0; i < 3; i++) {
+      ticketId += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+
+    for (let i = 0; i < 5; i++) {
+      ticketId += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    }
+  } while (generatedIds.has(ticketId));
+
+  generatedIds.add(ticketId);
+  return ticketId;
+}
+
 export default function App() {
-  function createData(title, description, status, edit, delet, assignTo) {
-    return { title, description, status, edit, delet, assignTo };
+  function createData(title, description, status, assignTo) {
+    return { title, description, status, assignTo };
   }
 
   const rows = [
@@ -55,35 +77,99 @@ export default function App() {
   ];
 
   const [add, setAdd] = useState([
-    { title: "", description: "", status: "", id: "" }
+    { title: "", description: "", status: "", id: "", assignTo: "milan" },
   ]);
 
+  const [search, setSearch] = useState("");
+
   function hanldeAdd({ title, description, curntCondition }) {
-    // console.log(title, description, curntCondition, "hello");
-
-    setAdd((prev) => [...prev, { title: { title }, description: { description }, status: { curntCondition }, id: "" }]);
-
+    setAdd((prev) => [
+      ...prev,
+      {
+        title: title,
+        description: description,
+        status: curntCondition,
+        id: generateUniqueTicketId(),
+        assignTo: "milan",
+      },
+    ]);
     console.log(add);
   }
 
-  function handleUpdate() {
-    // console.log(add);
-    console.log("update");
+  function handleUpdate({ title, description, curntCondition, status, id, assignTo }) {
+    console.log(
+      title,
+      description,
+      curntCondition,
+      status,
+      id,
+      "inside update function"
+    );
+
+    setAdd((prev) =>
+      prev.map((todo) => {
+        if (todo.id === id) {
+          const updatedTodo = {
+            title: title,
+            description: description,
+            // status: curntCondition ? curntCondition : status,
+            status: status ? status : curntCondition,
+            id: id,
+            assignTo: assignTo ? assignTo : "milan",
+          };
+          return updatedTodo;
+        } else return todo;
+      })
+    );
+  }
+
+  function handleDelete(id) {
+    // console.log(id);
+    setAdd((prev) => prev.filter((todo) => todo.id !== id));
+  }
+
+  function handleSearch(e) {
+    setSearch(e.target.value);
+    // console.log(search, "handle");
+
+
+    const filteredTodos = add.filter((todo) =>
+      Object.values(todo).some((value) => {
+        console.log(value, "value");
+        return (
+          typeof value === "string" &&
+          value.toLocaleLowerCase().includes(search)
+        );
+      })
+    );
+
+    console.log(filteredTodos);
+
+    // setAdd(filteredTodos);
+
+
   }
 
   return (
     <>
       <ThemeProvider theme={theme}>
         <div className="app">
-          <Addtodo onadd={hanldeAdd} obj={task} people={people} />
-          <Todo rows={rows} onUpdate={handleUpdate} obj={task} />
+          <Addtodo onadd={hanldeAdd} obj={task} people={people} todos={add} />
+          <Todo
+            rows={add}
+            onUpdate={handleUpdate}
+            obj={task}
+            onDelete={handleDelete}
+            onSearch={handleSearch}
+            search={search}
+          />
         </div>
       </ThemeProvider>
     </>
   );
 }
 
-function Addtodo({ onadd, obj }) {
+function Addtodo({ onadd, obj, todos }) {
   return (
     <>
       <div className="add-todo">
@@ -92,7 +178,7 @@ function Addtodo({ onadd, obj }) {
           <p>add your work</p>
         </div>
 
-        <BasicModal onclick={onadd} obj={obj}>
+        <BasicModal onclick={onadd} obj={obj} todos={todos}>
           + add
         </BasicModal>
       </div>
@@ -100,23 +186,36 @@ function Addtodo({ onadd, obj }) {
   );
 }
 
-function Todo({ rows, onUpdate, obj }) {
+function Todo({ rows, onUpdate, obj, onDelete, onSearch, search }) {
   return (
     <>
       <div className="list-container">
         <div className="search">
-          <TextField id="outlined-basic" label="search" variant="outlined" />
+          <TextField
+            id="outlined-basic"
+            label="search"
+            variant="outlined"
+            value={search}
+            onChange={(e) => onSearch(e)}
+          />
 
           <p className="flex filter">
             <FilterAltOutlinedIcon /> Filter
           </p>
         </div>
-        <List rows={rows} onUpdate={onUpdate} obj={obj} />
+        <List rows={rows} onUpdate={onUpdate} obj={obj} onDelete={onDelete} />
       </div>
     </>
   );
 }
 
-function List({ rows, onUpdate, obj }) {
-  return <CustomizedTables rows={rows} onUpdate={onUpdate} obj={obj} />;
+function List({ rows, onUpdate, obj, onDelete }) {
+  return (
+    <CustomizedTables
+      rows={rows}
+      onUpdate={onUpdate}
+      obj={obj}
+      onDelete={onDelete}
+    />
+  );
 }

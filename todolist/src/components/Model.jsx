@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -22,7 +22,10 @@ const style = {
     flexDirection: "column",
 };
 
-export default function BasicModal({ onclick, obj, data,children }) {
+
+
+
+export default function BasicModal({ onclick, obj, todos, children, row }) {
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -32,11 +35,26 @@ export default function BasicModal({ onclick, obj, data,children }) {
     const [description, setDescription] = useState("");
     const [curntCondition, setCurntCondition] = useState("completed");
 
+
+    useEffect(() => {
+        if (!row) return
+        setTitle(row.title)
+        setDescription(row.description)
+        setCurntCondition(row.status)
+
+    }, [row])
+
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(title, description, curntCondition);
 
-        if(onclick) onclick({ title, description, curntCondition });
+        if (onclick) onclick({ title, description, curntCondition });
+
+        if (row) onclick({ title, description, curntCondition, id: row.id });
+
+        setTitle("");
+        setDescription("");
+        setCurntCondition("completed");
+        handleClose(true);
     }
 
     return (
