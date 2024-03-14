@@ -22,7 +22,11 @@ const style = {
     flexDirection: "column",
 };
 
-
+const priority = [
+    'high',
+    'medium',
+    'low'
+  ]
 
 
 export default function BasicModal({ onclick, obj, todos, children, row }) {
@@ -35,7 +39,6 @@ export default function BasicModal({ onclick, obj, todos, children, row }) {
     const [description, setDescription] = useState("");
     const [curntCondition, setCurntCondition] = useState("completed");
 
-
     useEffect(() => {
         if (!row) return
         setTitle(row.title)
@@ -47,15 +50,17 @@ export default function BasicModal({ onclick, obj, todos, children, row }) {
     function handleSubmit(e) {
         e.preventDefault();
 
-        if (onclick) onclick({ title, description, curntCondition });
+        if (onclick) onclick({ title, description, curntCondition, });
 
-        if (row) onclick({ title, description, curntCondition, id: row.id });
+        if (row) onclick({ title, description, curntCondition, id: row.id, time: row.time });
 
         setTitle("");
         setDescription("");
         setCurntCondition("completed");
         handleClose(true);
     }
+
+    // console.log(row, "row inside modle");
 
     return (
         <>
@@ -78,7 +83,12 @@ export default function BasicModal({ onclick, obj, todos, children, row }) {
 
 
                         {/* this component for select is task is pending or not */}
+                        {/* <Select obj={obj ? obj : ""} condition={curntCondition} setCondition={setCurntCondition} defaulte={row.status} /> */}
                         <Select obj={obj ? obj : ""} condition={curntCondition} setCondition={setCurntCondition} />
+
+
+                        {/* this is for setting priority */}
+                        {/* <Select obj={priority} setCondition={setCurntCondition} row={row} /> */}
 
 
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>

@@ -11,21 +11,27 @@ export default function Select({
     status,
     condition,
     row,
+    defaulte,
 }) {
+
+    console.log(defaulte, "default")
+
+
     function handleClick(value) {
-        // console.log(value, row, "rows");
-
         if (row) {
-            row.assignTo = value;
 
-            console.log(row, "rows");
+            if (value === "high" || value === "medium" || value === "low") {
+                row.priority = value;
+            }
+
+            if (value === "milan" || value === "dixit" || value === "sachin") {
+                row.assignTo = value;
+            }
 
             setCondition(row);
         }
 
         setCondition(value);
-
-
     }
 
     return (
@@ -42,19 +48,15 @@ export default function Select({
                     id="outlined-select-currency"
                     select
                     label="Select"
-                    defaultValue={condition ? condition : obj[1].value}
-                    helperText={
-                        obj[1].value === "milan"
-                            ? `Please select People's for work`
-                            : `Please select Task's condition`
-                    }
+                    // defaultValue={typeof defaulte === "string" ? String(defaulte) : (condition ? condition : obj[1].value)}
+                    defaultValue={defaulte}
                 >
-                    {obj.map((option) => (
+                    {obj.map((option, i) => (
                         <MenuItem
                             key={option.value}
                             value={option.value}
-                            onClick={() => handleClick(option.value)}
-                        >
+                            // disabled={option.value === "selct" ? true : false}
+                            onClick={() => handleClick(option.value)}>
                             {obj[1].value === "milan" ? (
                                 <Avtar>{option.label}</Avtar>
                             ) : (

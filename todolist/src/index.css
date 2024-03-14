@@ -82,21 +82,19 @@ body {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-
-
     position: absolute;
     top: 46%;
-    left: 47%;
+    left: 0;
 }
 
-.green{
-   background-color: green;
+.green {
+    background-color: green;
 }
 
-.red{
+.red {
     background-color: red;
 }
 
-.gray{
+.gray {
     background-color: gray;
 }
