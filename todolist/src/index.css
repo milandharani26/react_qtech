@@ -26,7 +26,7 @@ body {
     justify-content: center;
 }
 
-.justify-between{
+.justify-between {
     justify-content: space-between;
 }
 
@@ -76,4 +76,25 @@ body {
     cursor: pointer;
     background-color: #fff;
     padding: 9px 16px;
+}
+
+.status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: 46%;
+    left: 0;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+.gray {
+    background-color: gray;
 }
